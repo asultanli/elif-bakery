@@ -406,6 +406,7 @@ function cardHtml(item) {
   const sub = getOtherLangs(item);
   const photo = item.photo_url || 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=450&fit=crop';
   const nameEsc = getName(item).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const priceNum = parseFloat((item.price_display || '0').replace(/[^\d.]/g, '')) || 0;
   const hasVideo = item.video_url ? ' has-video' : '';
   const videoCardClass = item.video_url ? ' video-card' : '';
   const videoEl = item.video_url
@@ -414,7 +415,7 @@ function cardHtml(item) {
     : '';
 
   return `
-    <div class="card${videoCardClass}" data-name="${nameEsc}" data-price="${item.price_value}">
+    <div class="card${videoCardClass}" data-name="${nameEsc}" data-price="${priceNum}">
       <div class="card-photo${hasVideo}">
         ${badge}
         <img src="${photo}" alt="" onerror="this.src='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=450&fit=crop'">
