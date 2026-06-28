@@ -33,12 +33,16 @@
     .hero-scroll { position:absolute; bottom:36px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--faint); animation:bob 2.6s ease infinite; }
 
     /* NAV */
-    .nav-wrap { position:sticky; top:0; z-index:100; background:rgba(242,235,217,.97); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); }
-    .nav { max-width:1100px; margin:0 auto; display:flex; overflow-x:auto; scrollbar-width:none; padding:0 20px; }
+    .nav-wrap { position:sticky; top:0; z-index:100; background:rgba(242,235,217,.97); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); display:flex; align-items:center; }
+    .nav { flex:1; display:flex; overflow-x:auto; scrollbar-width:none; padding:0 20px; }
     .nav::-webkit-scrollbar { display:none; }
     .nav-btn { flex-shrink:0; padding:14px 16px; font-size:9px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--faint); background:none; border:none; border-bottom:1.5px solid transparent; cursor:pointer; white-space:nowrap; transition:color .2s,border-color .2s; }
     .nav-btn:hover { color:var(--text); }
     .nav-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .lang-switcher { display:flex; align-items:center; gap:2px; padding:0 12px; border-left:1px solid var(--border); flex-shrink:0; }
+    .lang-btn { padding:6px 9px; font-size:9px; font-weight:600; letter-spacing:1px; color:var(--faint); background:none; border:none; border-radius:6px; cursor:pointer; transition:color .2s, background .2s; }
+    .lang-btn:hover { color:var(--text); }
+    .lang-btn.active { color:var(--gold); background:rgba(122,92,16,.1); }
 
     /* PAGE */
     .page { max-width:1100px; margin:0 auto; padding:72px 24px 120px; }
@@ -133,12 +137,23 @@
     .cart-fab svg { color:#fff; }
     .cart-fab-badge { position:absolute; top:-4px; right:-4px; width:20px; height:20px; border-radius:50%; background:var(--gold-dim); color:var(--bg); font-size:10px; font-weight:700; display:none; align-items:center; justify-content:center; }
 
+    /* SERVICE FEE BANNER */
+    .service-fee-banner { background:var(--green); text-align:center; padding:18px 24px; display:flex; align-items:center; justify-content:center; gap:16px; }
+    .sf-text { font-size:13px; letter-spacing:2px; text-transform:uppercase; color:rgba(242,235,217,.85); }
+    .sf-icon { color:var(--gold-dim); font-size:10px; }
+    @media(max-width:500px) { .sf-text { font-size:11px; letter-spacing:1px; } }
+
     /* FOOTER */
     footer { background:var(--green); text-align:center; padding:64px 24px 40px; }
     .f-logo { font-family:'Cormorant Garamond',serif; font-size:56px; font-weight:300; letter-spacing:16px; text-transform:uppercase; color:#F2EBD9; }
     .f-tag { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:15px; color:rgba(242,235,217,.55); margin-top:6px; margin-bottom:32px; }
     .f-rule { width:44px; height:1px; background:rgba(242,235,217,.3); margin:0 auto 32px; }
     .f-copy { font-size:11px; color:rgba(242,235,217,.3); padding-top:28px; border-top:1px solid rgba(242,235,217,.12); }
+    .f-service-fee { display:inline-block; margin-bottom:32px; border:1px solid rgba(242,235,217,.25); border-radius:100px; padding:10px 28px; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:rgba(242,235,217,.7); }
+    .f-contacts { margin-bottom:32px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .f-contact-link { font-size:20px; font-weight:400; color:#F2EBD9; text-decoration:none; letter-spacing:2px; }
+    .f-contact-link:hover { color:var(--gold-dim); }
+    .f-address { font-size:12px; color:rgba(242,235,217,.5); letter-spacing:1px; }
 
     /* ADMIN LINK */
     .admin-corner { position:fixed; top:12px; right:16px; z-index:200; color:var(--faint); font-size:11px; text-decoration:none; opacity:.4; }
@@ -202,6 +217,17 @@
 
 <div class="nav-wrap">
   <nav class="nav" id="mainNav"></nav>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="az">AZ</button>
+    <button class="lang-btn" data-lang="ru">RU</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+</div>
+
+<div class="service-fee-banner">
+  <span class="sf-icon">✦</span>
+  <span class="sf-text">Xidmət haqqı 5% · Service fee 5% · Сервисный сбор 5%</span>
+  <span class="sf-icon">✦</span>
 </div>
 
 <main class="page" id="menuPage">
@@ -211,6 +237,12 @@
 <footer>
   <p class="f-logo">Elif Bakery</p>
   <p class="f-tag">Elif Bakery</p>
+  <div class="f-rule"></div>
+  <p class="f-service-fee">Service fee 5%</p>
+  <div class="f-contacts">
+    <a class="f-contact-link" href="tel:0519876746">☎ 051 987 67 46</a>
+    <p class="f-address">28 May metrosu çıxışından sağ tərəf</p>
+  </div>
   <div class="f-rule"></div>
   <p class="f-copy">© 2025 Elif Bakery</p>
 </footer>
@@ -255,6 +287,37 @@ const SUPABASE_URL = 'https://rbjatapvjubsdaycdbyp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiamF0YXB2anVic2RheWNkYnlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTEyNTUsImV4cCI6MjA5NzY4NzI1NX0.yG3LIOU2poxRMGVVshER20G1XntBIDTbmNh2YDvMYbM';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+let currentLang = localStorage.getItem('elif_lang') || 'az';
+let globalCats = [], globalItems = [];
+
+function getName(obj) {
+  return obj['name_' + currentLang] || obj.name_az || obj.name_ru || '';
+}
+
+function getOtherLangs(obj) {
+  const all = { az: obj.name_az, ru: obj.name_ru, en: obj.name_en };
+  return Object.entries(all).filter(([k,v]) => k !== currentLang && v).map(([,v]) => v).join(' · ');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('elif_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  if (globalCats.length) {
+    buildNav(globalCats);
+    buildMenu(globalCats, globalItems);
+    initNav();
+    initReveal();
+    initVideoHover();
+    initCart();
+  }
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+
 // Per-slug title splits for the ornamental heading style
 const titleSplits = {
   'cold':     ['Холодные ', 'закуски'],
@@ -274,8 +337,10 @@ async function loadMenu() {
   ]);
   if (!cats || !cats.length) return;
 
+  globalCats = cats;
+  globalItems = items || [];
   buildNav(cats);
-  buildMenu(cats, items || []);
+  buildMenu(cats, globalItems);
   initNav();
   initReveal();
   initVideoHover();
@@ -284,7 +349,7 @@ async function loadMenu() {
 
 function buildNav(cats) {
   document.getElementById('mainNav').innerHTML = cats.map((c, i) =>
-    `<button class="nav-btn${i===0?' active':''}" data-target="${c.slug}">${c.name_ru}</button>`
+    `<button class="nav-btn${i===0?' active':''}" data-target="${c.slug}">${getName(c)}</button>`
   ).join('');
 }
 
@@ -299,8 +364,8 @@ function buildMenu(cats, items) {
     const catItems = bySlug[cat.slug] || [];
     if (!catItems.length) return '';
 
-    const split = titleSplits[cat.slug] || [cat.name_ru, ''];
-    const label = [cat.name_az, cat.name_en].filter(Boolean).join(' / ');
+    const split = titleSplits[cat.slug] || [getName(cat), ''];
+    const label = getOtherLangs(cat);
 
     let gridHtml;
     if (cat.slug === 'drinks') {
@@ -338,9 +403,9 @@ function cardHtml(item) {
   const tag = item.badge && tagClass[item.badge]
     ? `<div class="card-tags"><span class="tag ${tagClass[item.badge]}">${item.badge_label || item.badge}</span></div>` : '';
 
-  const sub = [item.name_az, item.name_en].filter(Boolean).join(' · ');
+  const sub = getOtherLangs(item);
   const photo = item.photo_url || 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=450&fit=crop';
-  const nameEsc = (item.name_ru || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const nameEsc = getName(item).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const hasVideo = item.video_url ? ' has-video' : '';
   const videoCardClass = item.video_url ? ' video-card' : '';
   const videoEl = item.video_url
@@ -356,7 +421,7 @@ function cardHtml(item) {
         ${videoEl}
       </div>
       <div class="card-body">
-        <p class="card-name">${item.name_ru}</p>
+        <p class="card-name">${getName(item)}</p>
         ${sub ? `<p class="card-sub">${sub}</p>` : ''}
         ${item.description_ru ? `<p class="card-desc">${item.description_ru}</p>` : ''}
         <div class="card-footer">
