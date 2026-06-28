@@ -523,7 +523,7 @@ const cart = {};
 function initCart() {
   document.querySelectorAll('.card[data-name][data-price]').forEach(card => {
     const name  = card.dataset.name;
-    const price = parseInt(card.dataset.price) || 0;
+    const price = parseFloat(card.dataset.price) || 0;
     const footer = card.querySelector('.card-footer');
     if (!footer) return;
     const btn = document.createElement('button');
