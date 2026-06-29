@@ -253,6 +253,63 @@
     }
     .btn-del:hover { color: var(--red); background: rgba(192,57,43,0.08); }
 
+    .btn-edit-name {
+      background: none; color: var(--faint);
+      border: none; font-size: 0.85rem; cursor: pointer; padding: 4px 6px;
+      border-radius: 6px; transition: color 0.2s, background 0.2s;
+    }
+    .btn-edit-name:hover { color: var(--gold); background: rgba(154,116,24,0.1); }
+
+    .name-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.5);
+      align-items: center; justify-content: center;
+    }
+    .name-modal.open { display: flex; }
+    .name-modal-box {
+      background: var(--bg);
+      border-radius: 18px;
+      padding: 28px 28px 22px;
+      width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .name-modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 300;
+      color: var(--cream); margin-bottom: 20px;
+    }
+    .name-modal-box label {
+      display: block; font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--faint); margin-bottom: 5px;
+    }
+    .name-modal-box input {
+      display: block; width: 100%; padding: 10px 14px;
+      border: 1px solid var(--border2); border-radius: 9px;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif;
+      background: var(--surface); color: var(--text);
+      outline: none; margin-bottom: 14px;
+    }
+    .name-modal-box input:focus { border-color: var(--green); }
+    .name-modal-actions { display: flex; gap: 8px; margin-top: 4px; }
+    .btn-name-save {
+      flex: 1; padding: 10px;
+      background: var(--green); color: var(--bg);
+      border: none; border-radius: 9px; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    .btn-name-save:hover { opacity: 0.85; }
+    .btn-name-cancel {
+      padding: 10px 18px;
+      background: none; border: 1px solid var(--border2);
+      color: var(--faint); border-radius: 9px; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 11px;
+      transition: border-color 0.2s;
+    }
+    .btn-name-cancel:hover { border-color: var(--faint); }
+
     /* PHOTO EDIT */
     .item-photo-wrap { position: relative; flex-shrink: 0; cursor: pointer; }
     .item-photo-wrap:hover .photo-overlay { opacity: 1; }
@@ -445,6 +502,23 @@
   </div>
 </div>
 
+<!-- NAME MODAL -->
+<div class="name-modal" id="nameModal" onclick="if(event.target===this)closeNameModal()">
+  <div class="name-modal-box">
+    <div class="name-modal-title">Редактировать название</div>
+    <label>AZ</label>
+    <input type="text" id="nameInputAz" placeholder="Название на азербайджанском">
+    <label>RU</label>
+    <input type="text" id="nameInputRu" placeholder="Название на русском">
+    <label>EN</label>
+    <input type="text" id="nameInputEn" placeholder="Название на английском">
+    <div class="name-modal-actions">
+      <button class="btn-name-save" onclick="saveName()">Сохранить</button>
+      <button class="btn-name-cancel" onclick="closeNameModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <!-- PHOTO MODAL -->
 <div class="photo-modal" id="photoModal" onclick="if(event.target===this)closePhotoModal()">
   <div class="photo-modal-box">
@@ -456,6 +530,9 @@
       📷 Загрузить с устройства
     </button>
     <input class="photo-url-input" id="photoUrlInput" placeholder="Или вставь URL фото…" oninput="previewUrl(this.value)">
+    <div style="height:1px;background:var(--border);margin:4px 0 12px"></div>
+    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:6px">🎬 Video URL (необязательно)</label>
+    <input class="photo-url-input" id="photoVideoInput" placeholder="URL видео из Supabase Storage…">
     <div class="photo-uploading" id="photoUploading">Загружаем…</div>
     <div class="photo-modal-actions">
       <button class="btn-photo-save" onclick="savePhoto()">Сохранить</button>
@@ -566,6 +643,7 @@ function itemRowHtml(item) {
       <div class="item-name">${item.name_ru}</div>
       <div class="item-sub">${item.name_az || ''}</div>
     </div>
+    <button class="btn-edit-name" onclick="openNameModal(${item.id})" title="Изменить название">✏️</button>
     <input class="item-price-input" id="price-${item.id}" value="${item.price_display}">
     <button class="btn-save" onclick="savePrice(${item.id})">✓</button>
     <label class="toggle">
@@ -633,6 +711,47 @@ async function addItem() {
   document.getElementById('newBadge').value = '';
   renderStats(); renderList();
   toast('✓ Блюдо добавлено!');
+}
+
+// ---- Name Modal ----
+let nameEditId = null;
+
+function openNameModal(id) {
+  nameEditId = id;
+  const item = allItems.find(i => i.id === id);
+  document.getElementById('nameInputAz').value = item?.name_az || '';
+  document.getElementById('nameInputRu').value = item?.name_ru || '';
+  document.getElementById('nameInputEn').value = item?.name_en || '';
+  document.getElementById('nameModal').classList.add('open');
+  setTimeout(() => document.getElementById('nameInputAz').focus(), 100);
+}
+
+function closeNameModal() {
+  document.getElementById('nameModal').classList.remove('open');
+  nameEditId = null;
+}
+
+async function saveName() {
+  if (!nameEditId) return;
+  const az = document.getElementById('nameInputAz').value.trim();
+  const ru = document.getElementById('nameInputRu').value.trim();
+  const en = document.getElementById('nameInputEn').value.trim();
+  if (!az && !ru) { toast('Заполни хотя бы AZ или RU'); return; }
+
+  const { error } = await sb.from('elif_menu_items')
+    .update({ name_az: az, name_ru: ru, name_en: en })
+    .eq('id', nameEditId);
+  if (error) { toast('Ошибка: ' + error.message); return; }
+
+  const item = allItems.find(i => i.id === nameEditId);
+  if (item) { item.name_az = az; item.name_ru = ru; item.name_en = en; }
+  const row = document.getElementById('row-' + nameEditId);
+  if (row) {
+    row.querySelector('.item-name').textContent = ru;
+    row.querySelector('.item-sub').textContent = az;
+  }
+  closeNameModal();
+  toast('✓ Название обновлено');
 }
 
 // ---- Photo Modal ----
