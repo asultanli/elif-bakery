@@ -481,9 +481,10 @@ function initVideoHover() {
     card.addEventListener('mouseenter', () => { if (isTouch()) return; setOrigin(); video.currentTime = 0; video.play().catch(()=>{}); });
     card.addEventListener('mouseleave', () => { if (isTouch()) return; video.pause(); video.currentTime = 0; });
 
-    /* mobile tap → fullscreen card modal */
-    card.addEventListener('click', (e) => {
+    /* mobile tap → fullscreen card modal (touchend = no 300ms delay, no zoom) */
+    card.addEventListener('touchend', (e) => {
       if (!isTouch()) return;
+      e.preventDefault();
       e.stopPropagation();
       const img    = card.querySelector('.card-photo img');
       const mv     = document.getElementById('cardModalVideo');
@@ -499,6 +500,9 @@ function initVideoHover() {
       } else {
         mv.style.display = 'none'; mv.src = '';
       }
+      // Reset any browser zoom before opening modal (Android fix)
+      const vp = document.querySelector('meta[name=viewport]');
+      vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
       document.getElementById('cardModal').classList.add('open');
       document.body.style.overflow = 'hidden';
     });
