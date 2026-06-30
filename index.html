@@ -604,14 +604,10 @@ document.getElementById('cartClear').addEventListener('click', () => { Object.ke
 
 loadMenu();
 
+// Unregister any leftover service workers — they were causing menu load failures
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    reg.addEventListener('updatefound', () => {
-      const newSW = reg.installing;
-      newSW.addEventListener('statechange', () => {
-        if (newSW.state === 'activated') location.reload();
-      });
-    });
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
   });
 }
 </script>
