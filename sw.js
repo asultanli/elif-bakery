@@ -1,14 +1,24 @@
-// Bump this version on every deploy — triggers auto-reload for all visitors
-const VERSION = '2025-06-30-v2';
+const VERSION = '2025-06-30-v3';
+const CACHE = 'elif-' + VERSION;
 
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
 
-// Network-first: always fetch fresh HTML, fall back to cache only if offline
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+// Network-first for HTML, cache-first for assets
 self.addEventListener('fetch', e => {
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
+      fetch(e.request, { cache: 'no-store' })
+        .catch(() => caches.match(e.request))
     );
   }
 });
