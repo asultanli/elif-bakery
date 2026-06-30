@@ -1,24 +1,11 @@
-const VERSION = '2025-06-30-v3';
-const CACHE = 'elif-' + VERSION;
-
-self.addEventListener('install', e => {
-  self.skipWaiting();
-});
-
+// Self-destruct: unregister this SW and reload all clients
+self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    self.registration.unregister().then(() =>
+      self.clients.matchAll({ type: 'window' }).then(clients =>
+        clients.forEach(c => c.navigate(c.url))
+      )
+    )
   );
-});
-
-// Network-first for HTML, cache-first for assets
-self.addEventListener('fetch', e => {
-  if (e.request.mode === 'navigate') {
-    e.respondWith(
-      fetch(e.request, { cache: 'no-store' })
-        .catch(() => caches.match(e.request))
-    );
-  }
 });
