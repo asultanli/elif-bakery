@@ -787,13 +787,26 @@ function previewUrl(url) {
 async function handlePhotoFile(e) {
   const file = e.target.files[0];
   if (!file || !photoEditId) return;
-  const ext = file.name.split('.').pop().toLowerCase();
-  const filename = `item-${photoEditId}-${Date.now()}.${ext}`;
+
+  // Convert any image (incl. HEIC) to JPEG via canvas so Android can display it
+  const jpeg = await new Promise(resolve => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = img.naturalWidth; c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      c.toBlob(b => { URL.revokeObjectURL(url); resolve(b); }, 'image/jpeg', 0.88);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+
+  const filename = `item-${photoEditId}-${Date.now()}.jpg`;
   const path = `elif-bakery/${filename}`;
 
   if (!sbAdmin) { toast('Введи Service Role Key при входе для загрузки фото'); return; }
   document.getElementById('photoUploading').style.display = 'block';
-  const { data, error } = await sbAdmin.storage.from('menu-media').upload(path, file, { upsert: true });
+  const { data, error } = await sbAdmin.storage.from('menu-media').upload(path, jpeg, { upsert: true, contentType: 'image/jpeg' });
   document.getElementById('photoUploading').style.display = 'none';
 
   if (error) { toast('Ошибка загрузки: ' + error.message); return; }
