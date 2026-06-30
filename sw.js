@@ -1,5 +1,5 @@
 // Bump this version on every deploy — triggers auto-reload for all visitors
-const VERSION = '2025-06-30-v1';
+const VERSION = '2025-06-30-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
