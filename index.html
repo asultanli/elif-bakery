@@ -68,17 +68,20 @@
 
     /* CARD */
     .card { background:var(--card); border-radius:16px; border:1px solid var(--border); overflow:hidden; transition:transform .32s cubic-bezier(.2,0,.2,1),box-shadow .32s,border-color .2s; position:relative; display:flex; flex-direction:column; z-index:1; touch-action:manipulation; }
-    .card:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(42,84,32,.12); border-color:var(--border2); }
+    @media (hover: hover) { .card:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(42,84,32,.12); border-color:var(--border2); } }
     .card.video-card { overflow:visible; }
     .card.video-card .card-photo { border-radius:16px 16px 0 0; overflow:hidden; }
     .card.video-card .card-body { border-radius:0 0 16px 16px; overflow:hidden; background:var(--card); }
-    .card.video-card:hover, .card.video-card.touch-active { transform:scale(1.9); box-shadow:0 40px 100px rgba(0,0,0,.32); border-color:var(--border2); z-index:20; }
+    @media (hover: hover) {
+      .card.video-card:hover { transform:scale(1.9); box-shadow:0 40px 100px rgba(0,0,0,.32); border-color:var(--border2); z-index:20; }
+    }
+    .card.video-card.touch-active { transform:scale(1.9); box-shadow:0 40px 100px rgba(0,0,0,.32); border-color:var(--border2); z-index:20; }
 
     .card-photo { width:100%; aspect-ratio:4/3; background:var(--surface); position:relative; overflow:hidden; flex-shrink:0; }
     .card-photo img { width:100%; height:100%; object-fit:cover; object-position:center 80%; display:block; transition:transform .4s ease, opacity .35s ease; }
-    .card:hover .card-photo img { transform:scale(1.04); }
+    @media (hover: hover) { .card:hover .card-photo img { transform:scale(1.04); } }
     .card-photo video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; background:#1a1007; opacity:0; transition:opacity .35s ease; pointer-events:none; }
-    .card-photo.has-video:hover img { opacity:0; transform:scale(1.04); }
+    @media (hover: hover) { .card-photo.has-video:hover img { opacity:0; transform:scale(1.04); } }
     .card-photo.has-video:hover video { opacity:1; }
     .card-video-icon { position:absolute; bottom:10px; right:10px; width:26px; height:26px; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; opacity:.7; transition:opacity .2s; pointer-events:none; }
     .card-photo.has-video .card-video-icon { display:flex; }
