@@ -481,18 +481,19 @@ function initVideoHover() {
     card.addEventListener('mouseenter', () => { if (isTouch()) return; setOrigin(); video.currentTime = 0; video.play().catch(()=>{}); });
     card.addEventListener('mouseleave', () => { if (isTouch()) return; video.pause(); video.currentTime = 0; });
 
-    /* mobile tap → fullscreen card modal */
+    /* mobile tap on photo → fullscreen card modal */
+    const cardPhoto = card.querySelector('.card-photo');
     let touchStartX = 0, touchStartY = 0;
-    card.addEventListener('touchstart', (e) => {
+    cardPhoto.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
-    card.addEventListener('touchend', (e) => {
+    cardPhoto.addEventListener('touchend', (e) => {
       if (!isTouch()) return;
       const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
       const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-      if (dx > 8 || dy > 8) return; // was a scroll, not a tap
+      if (dx > 8 || dy > 8) return;
       e.preventDefault();
       e.stopPropagation();
       const img    = card.querySelector('.card-photo img');
@@ -560,7 +561,7 @@ function initCart() {
       renderCart(); openCart();
     };
     btn.addEventListener('click', doAdd);
-    btn.addEventListener('touchend', (e) => { e.stopPropagation(); });
+    btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); doAdd(); });
     footer.appendChild(btn);
   });
 }
