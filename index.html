@@ -590,10 +590,10 @@ function renderCart() {
         <span class="qty-num">${item.qty}</span>
         <button class="qty-btn" data-idx="${idx}" data-action="plus">+</button>
       </div>
-      <span class="cart-item-price">${item.price * item.qty} ₼</span>
+      <span class="cart-item-price">${(item.price * item.qty).toFixed(2).replace(/\.00$/, '')} ₼</span>
     </div>`;
   }).join('');
-  document.getElementById('cartTotal').textContent = sum + ' ₼';
+  document.getElementById('cartTotal').textContent = parseFloat(sum.toFixed(2)) + ' ₼';
   body.querySelectorAll('.qty-btn').forEach(btn => btn.addEventListener('click', () => {
     const k = keys[parseInt(btn.dataset.idx)];
     if (!k || !cart[k]) return;
