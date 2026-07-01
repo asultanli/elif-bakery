@@ -552,13 +552,15 @@ function initCart() {
     const btn = document.createElement('button');
     btn.className = 'card-add';
     btn.innerHTML = '+';
-    btn.addEventListener('click', () => {
+    const doAdd = () => {
       if (cart[name]) cart[name].qty++;
       else cart[name] = {name, price, qty:1};
       btn.classList.add('added'); btn.innerHTML = '✓';
       setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = '+'; }, 900);
       renderCart(); openCart();
-    });
+    };
+    btn.addEventListener('click', doAdd);
+    btn.addEventListener('touchend', (e) => { e.stopPropagation(); });
     footer.appendChild(btn);
   });
 }
